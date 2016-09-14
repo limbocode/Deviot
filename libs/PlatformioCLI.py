@@ -467,7 +467,7 @@ class PlatformioCLI(CommandsPy):
             return
 
         # open platformio.ini and get the environment
-        INIFILE = ConfigObj(C['INIPATH'])
+        INIFILE = ConfigObj(C['INIPATH'], list_values=False)
         ENVIRONMENT = 'env:%s' % C['ENVIRONMENT']
 
         # stop if environment wasn't initialized yet
