@@ -89,7 +89,7 @@ class PlatformioCLI(CommandsPy):
             message_error = 'invalid_file_{0}'
 
         # unsaved changes
-        if (self.view.is_dirty()):
+        if (self.view.is_dirty() and C['SKETCHPATH'] is not None):
             self.view.run_command('save')
 
         # Empty sketch
@@ -628,9 +628,8 @@ class PlatformioCLI(CommandsPy):
         file.writeFile(text)
 
         self.view.set_scratch(True)
-        window = sublime.active_window()
-        window.run_command('close')
-        self.view = window.open_file(fullpath)
+        self.window.run_command('close')
+        self.view = self.window.open_file(fullpath)
 
     def listSerialPorts(self):
         """
