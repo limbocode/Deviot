@@ -552,7 +552,9 @@ def getEnvFromFile():
 
     window = sublime.active_window()
     view = window.active_view()
-
+    if(view.file_name() is None):
+        return []
+        
     inipath = getInitPath(view)
 
     envs = []
