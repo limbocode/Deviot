@@ -81,13 +81,6 @@ def getEnvDir():
     plugin_user_path = getDeviotUserPath()
     env_dir = os.path.join(plugin_user_path, 'penv')
 
-    try:
-        os.makedirs(env_dir)
-    except OSError as exc:
-        if exc.errno != errno.EEXIST:
-            raise exc
-        pass
-
     return env_dir
 
 
@@ -97,13 +90,6 @@ def getEnvBinDir():
     env_dir = getEnvDir()
     env_bin_dir = os.path.join(
         env_dir, 'Scripts' if 'windows' in sublime.platform() else 'bin')
-
-    try:
-        os.makedirs(env_bin_dir)
-    except OSError as exc:
-        if exc.errno != errno.EEXIST:
-            raise exc
-        pass
 
     return env_bin_dir
 

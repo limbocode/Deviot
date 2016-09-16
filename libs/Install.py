@@ -181,6 +181,8 @@ class PioInstall(object):
         script and install platformIO on it. The state of the installation
         is displayed on the console
         '''
+        # create folders
+        Paths.makeFolder(self.env_bin_dir)
 
         # defining default env paths
         os.environ['PATH'] = self.getEnvPaths()
