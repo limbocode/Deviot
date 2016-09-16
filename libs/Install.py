@@ -46,7 +46,8 @@ class PioInstall(object):
         self.cache_dir = Paths.getCacheDir()
         self.env_file = Paths.getEnvFile()
         self.pio_current_ver = Preferences().get('pio_version', 0)
-        self.python = os.path.join(self.env_bin_dir, 'python')
+        self.pylink = 'python'
+        self.py = os.path.join(self.env_bin_dir, self.pylink)
         self.feedback = feedback
         self.cached_file = False
         self.pio_version = None
@@ -134,7 +135,7 @@ class PioInstall(object):
 
         # check platformio
         if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.python), '-m', 'platformio', '--version']
+            cmd = ['"%s"' % (self.py), '-m', 'platformio', '--version']
         else:
             executable = os.path.join(self.env_bin_dir, 'pio')
             cmd = ['"%s"' % (executable), '--version']
@@ -185,7 +186,7 @@ class PioInstall(object):
         os.environ['PATH'] = self.getEnvPaths()
 
         # checking python
-        cmd = ['python', '--version']
+        cmd = [self.pylink, '--version']
         out = Tools.runCommand(cmd)
 
         py_version = sub(r'\D', '', out[1])
@@ -256,7 +257,7 @@ class PioInstall(object):
         current_time = time.strftime('%H:%M:%S')
         self.message_queue.put("installing_pio{0}", current_time)
 
-        cmd = ['python', 'virtualenv.py', '"%s"' % self.env_dir]
+        cmd = [self.pylink, 'virtualenv.py', '"%s"' % self.env_dir]
         out = Tools.runCommand(cmd, virtualenv)
 
         # Error
@@ -278,7 +279,7 @@ class PioInstall(object):
 
         # Install pio
         if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.python), '-m', 'pip',
+            cmd = ['"%s"' % (self.py), '-m', 'pip',
                    'install', '-U', 'platformio']
         else:
             executable = os.path.join(self.env_bin_dir, 'pip')
@@ -330,7 +331,7 @@ class PioInstall(object):
 
                 # try to update
                 if(sublime.platform() == 'osx'):
-                    cmd = ['"%s"' % (self.python), '-m', 'pip',
+                    cmd = ['"%s"' % (self.py), '-m', 'pip',
                            'install', '-U', 'platformio']
                 else:
                     executable = os.path.join(self.env_bin_dir, 'pip')
@@ -348,7 +349,7 @@ class PioInstall(object):
 
                 # get version
                 if(sublime.platform() == 'osx'):
-                    cmd = ['"%s"' % (self.python), '-m',
+                    cmd = ['"%s"' % (self.py), '-m',
                            'platformio', '--version']
                 else:
                     executable = os.path.join(self.env_bin_dir, 'pio')
@@ -424,7 +425,7 @@ class PioInstall(object):
 
         # get pio version
         if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.python), '-m', 'platformio', '--version']
+            cmd = ['"%s"' % (self.py), '-m', 'platformio', '--version']
         else:
             executable = os.path.join(self.env_bin_dir, 'pio')
             cmd = ['"%s"' % (executable), '--version']
@@ -449,7 +450,7 @@ class PioInstall(object):
 
         # Uninstall current version
         if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.python), '-m', 'pip',
+            cmd = ['"%s"' % (self.py), '-m', 'pip',
                    'uninstall', '--yes', 'platformio']
         else:
             executable = os.path.join(self.env_bin_dir, 'pip')
@@ -464,7 +465,7 @@ class PioInstall(object):
                 'platformio/archive/develop.zip'
 
             if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.python), '-m', 'pip',
+                cmd = ['"%s"' % (self.py), '-m', 'pip',
                        'install', '-U', develop_file]
             else:
                 executable = os.path.join(self.env_bin_dir, 'pip')
@@ -477,7 +478,7 @@ class PioInstall(object):
         else:
             # install stable version
             if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.python), '-m', 'pip',
+                cmd = ['"%s"' % (self.py), '-m', 'pip',
                        'install', '-U', 'platformio']
             else:
                 executable = os.path.join(self.env_bin_dir, 'pip')
@@ -491,7 +492,7 @@ class PioInstall(object):
         else:
             # get pio version
             if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.python), '-m',
+                cmd = ['"%s"' % (self.py), '-m',
                        'platformio', '--version']
             else:
                 executable = os.path.join(self.env_bin_dir, 'pio')
@@ -526,7 +527,7 @@ class PioInstall(object):
         if(dependency == 'zeroconf' or dependency == 'all'):
             # Install zeroconf
             if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.python), '-m', 'pip',
+                cmd = ['"%s"' % (self.py), '-m', 'pip',
                        'install', '-U', 'zeroconf']
             else:
                 executable = os.path.join(self.env_bin_dir, 'pip')
