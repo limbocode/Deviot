@@ -207,7 +207,7 @@ def getDefaultPaths():
     if(sublime.platform() == 'windows'):
         default_path = ["C:\Python27\\", "C:\Python27\Scripts"]
     else:
-        default_path = ["/usr/bin", "/usr/local/bin"]
+        default_path = ["/usr/bin", "/usr/bin/env", "/usr/local/bin"]
     return default_path
 
 
