@@ -30,7 +30,7 @@ class CommandsPy(object):
     def __init__(self, console=False, env_path=False, cwd=None):
         super(CommandsPy, self).__init__()
         env_bin_dir = getEnvBinDir()
-        self.python = os.path.join(env_bin_dir, 'python')
+        self.python = os.path.join(env_bin_dir, 'python2')
         self.Preferences = Preferences()
         self.error_running = False
         self.console = console

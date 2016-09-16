@@ -46,7 +46,7 @@ class PioInstall(object):
         self.cache_dir = Paths.getCacheDir()
         self.env_file = Paths.getEnvFile()
         self.pio_current_ver = Preferences().get('pio_version', 0)
-        self.pylink = 'python'
+        self.pylink = 'python2'
         self.py = os.path.join(self.env_bin_dir, self.pylink)
         self.feedback = feedback
         self.cached_file = False
