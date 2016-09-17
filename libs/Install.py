@@ -134,11 +134,7 @@ class PioInstall(object):
                 self.Preferences.set('check_update', str(date_update))
 
         # check platformio
-        if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.py), '-m', 'platformio', '--version']
-        else:
-            executable = os.path.join(self.env_bin_dir, 'pio')
-            cmd = ['"%s"' % (executable), '--version']
+        cmd = ['pio', '--version']
         out = Tools.runCommand(cmd)
 
         # try to get the current version installed
@@ -269,6 +265,10 @@ class PioInstall(object):
                 "error_making_env_{0}", current_time)
             return
 
+        # save env paths
+        env_path = [Paths.getEnvDir(), self.env_bin_dir]
+        self.saveEnvPaths(env_path)
+
         py_version = sub(r'\D', '', out[1])
 
         # error
@@ -280,16 +280,7 @@ class PioInstall(object):
             return
 
         # Install pio
-        if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.py), '-m', 'pip',
-                   'install', '-U', 'platformio']
-        else:
-            executable = os.path.join(self.env_bin_dir, 'pip')
-            cmd = ['"%s"' % (executable), 'install', '-U', 'platformio']
-        out = Tools.runCommand(cmd)
-
-        # Install dependecies
-        self.installDependencies()
+        out = Tools.runCommand(['pip', 'install', '-U', 'platformio'])
 
         # Error
         if(out[0] > 0):
@@ -297,6 +288,9 @@ class PioInstall(object):
             self.message_queue.put(
                 "error_installing_pio_{0}", current_time)
             return
+
+        # Install dependecies
+        # self.installDependencies()
 
         self.endSetup()
 
@@ -332,14 +326,7 @@ class PioInstall(object):
                     self.message_queue.put("upgrading_pio")
 
                 # try to update
-                if(sublime.platform() == 'osx'):
-                    cmd = ['"%s"' % (self.py), '-m', 'pip',
-                           'install', '-U', 'platformio']
-                else:
-                    executable = os.path.join(self.env_bin_dir, 'pip')
-                    cmd = ['"%s"' % (executable), 'install',
-                           '-U', 'platformio']
-                out = Tools.runCommand(cmd)
+                out = Tools.runCommand(['pip', 'install', '-U', 'platformio'])
 
                 # error updating
                 if(out[0] > 0):
@@ -350,13 +337,7 @@ class PioInstall(object):
                 Tools.getJSONBoards(force=True)
 
                 # get version
-                if(sublime.platform() == 'osx'):
-                    cmd = ['"%s"' % (self.py), '-m',
-                           'platformio', '--version']
-                else:
-                    executable = os.path.join(self.env_bin_dir, 'pio')
-                    cmd = ['"%s"' % (executable), '--version']
-                out = Tools.runCommand(cmd)
+                out = Tools.runCommand(['pio', '--version'])
 
                 pio_new_ver = match(r"\w+\W \w+ (.+)", out[1]).group(1)
 
@@ -421,17 +402,8 @@ class PioInstall(object):
         final settings in a file
         '''
 
-        # save env paths
-        env_path = [Paths.getEnvDir(), self.env_bin_dir]
-        self.saveEnvPaths(env_path)
-
         # get pio version
-        if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.py), '-m', 'platformio', '--version']
-        else:
-            executable = os.path.join(self.env_bin_dir, 'pio')
-            cmd = ['"%s"' % (executable), '--version']
-        out = Tools.runCommand(cmd)
+        out = Tools.runCommand(['pio', '--version'])
 
         pio_version = match(r"\w+\W \w+ (.+)", out[1]).group(1)
         self.Preferences.set('pio_version', pio_version)
@@ -451,55 +423,31 @@ class PioInstall(object):
         developer = self.Preferences.get('developer', False)
 
         # Uninstall current version
-        if(sublime.platform() == 'osx'):
-            cmd = ['"%s"' % (self.py), '-m', 'pip',
-                   'uninstall', '--yes', 'platformio']
-        else:
-            executable = os.path.join(self.env_bin_dir, 'pip')
-            cmd = ['"%s"' % (executable), 'uninstall', '--yes', 'platformio']
         current_time = time.strftime('%H:%M:%S')
         self.message_queue.put("uninstall_old_pio{0}", current_time)
-        out = Tools.runCommand(cmd)
+        out = Tools.runCommand(['pip', 'uninstall', '--yes', 'platformio'])
 
         if(not developer):
             # install developer version
             develop_file = 'https://github.com/platformio/' \
                 'platformio/archive/develop.zip'
 
-            if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.py), '-m', 'pip',
-                       'install', '-U', develop_file]
-            else:
-                executable = os.path.join(self.env_bin_dir, 'pip')
-                cmd = ['"%s"' % (executable), 'install', '-U', develop_file]
-
             current_time = time.strftime('%H:%M:%S')
             self.message_queue.put("installing_dev_pio{0}", current_time)
-            out = Tools.runCommand(cmd)
+            out = Tools.runCommand(['pip', 'install', '-U', develop_file])
 
         else:
             # install stable version
-            if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.py), '-m', 'pip',
-                       'install', '-U', 'platformio']
-            else:
-                executable = os.path.join(self.env_bin_dir, 'pip')
-                cmd = ['"%s"' % (executable), 'install', '-U', 'platformio']
             current_time = time.strftime('%H:%M:%S')
             self.message_queue.put("installing_stable_pio{0}", current_time)
-            out = Tools.runCommand(cmd)
+            out = Tools.runCommand(['pip', 'install', '-U', 'platformio'])
+        
         # show status in deviot console
         if(out[0] > 0):
             self.message_queue.put('error_pio_updates')
         else:
             # get pio version
-            if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.py), '-m',
-                       'platformio', '--version']
-            else:
-                executable = os.path.join(self.env_bin_dir, 'pio')
-                cmd = ['"%s"' % (executable), '--version']
-            out = Tools.runCommand(cmd)
+            out = Tools.runCommand(['pio', '--version'])
 
             # Storing pio version and developer state
             pio_version = match(r"\w+\W \w+ (.+)", out[1]).group(1)
@@ -528,10 +476,4 @@ class PioInstall(object):
 
         if(dependency == 'zeroconf' or dependency == 'all'):
             # Install zeroconf
-            if(sublime.platform() == 'osx'):
-                cmd = ['"%s"' % (self.py), '-m', 'pip',
-                       'install', '-U', 'zeroconf']
-            else:
-                executable = os.path.join(self.env_bin_dir, 'pip')
-                cmd = ['"%s"' % (executable), 'install', '-U', 'zeroconf']
-            Tools.runCommand(cmd)
+            Tools.runCommand(['pip', 'install', '-U', 'zeroconf'])

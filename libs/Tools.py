@@ -207,7 +207,7 @@ def getDefaultPaths():
     if(sublime.platform() == 'windows'):
         default_path = ["C:\Python27\\", "C:\Python27\Scripts"]
     else:
-        default_path = ["/usr/bin", "/usr/bin/env", "/usr/local/bin"]
+        default_path = ["/usr/bin", "/usr/local/bin"]
     return default_path
 
 
@@ -790,6 +790,34 @@ def highlightRemove(errors_list):
 
     return return_list
 
+def createCommand(command):
+    from .Preferences import Preferences
+
+    env_path = Preferences().get('env_path', False)
+
+    if(not env_path):
+        return command
+
+    from . import Paths
+    bin_dir = Paths.getEnvBinDir()
+        
+    _os = sublime.platform()
+
+    if(_os is 'osx'):        
+        exe = 'python'
+        options = ['-m', command[0]]
+    else:
+        exe = command[0]
+        options = []
+
+    executable = os.path.join(bin_dir, exe)
+    cmd = ['"%s"' % (executable)]
+    cmd.extend(options)
+    cmd.extend(command[1:])
+
+    return cmd
+
+
 
 def runCommand(command, cwd=None):
     '''Commands
@@ -807,8 +835,10 @@ def runCommand(command, cwd=None):
     '''
     import subprocess
 
+    command = createCommand(command)
     command.append("2>&1")
     command = ' '.join(command)
+
     process = subprocess.Popen(command, stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE, cwd=cwd,
                                universal_newlines=True, shell=True)

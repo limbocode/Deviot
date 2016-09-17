@@ -136,23 +136,18 @@ class CommandsPy(object):
         Arguments:
             command {list} -- actions command to run in platformIO
         """
-        options = commands[0]
+        from . import Tools
 
-        try:
-            args = " ".join(commands[1:])
-        except:
-            args = ' -v'
+        scmd = " ".join(commands)
+        command = Tools.createCommand(['pio', '-f', '-c', 'sublimetext'])
+        command.extend(commands)
 
         # full verbose mode
-        if(self.verbose and 'run' in options and '-e' in args and 'upload' not in args):
-            args += ' -vvv'
+        if(self.verbose and 'run' in scmd and '-e' in scmd and 'upload' not in scmd):
+            command.extend(['-vvv'])
 
-        if(sublime.platform() == 'osx'):
-            command = '"%s" -m platformio -f -c sublimetext %s %s 2>&1' % (
-                self.python, options, args)
-        else:
-            command = "platformio -f -c sublimetext %s %s 2>&1" % (
-                options, args)
+        command.append("2>&1")
+        command = ' '.join(command)
 
         return command
 
